@@ -45,10 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'social_django',
     # Own apps
-    # 'portfolio.apps.magazine',
-    # "portfolio.apps.core",
-    # "portfolio.apps.category",
-    # "portfolio.apps.ideas",
+    "crudl.apps.core",
+    "crudl.apps.category",
+    "crudl.apps.ideas",
+    'crudl.apps.magazine',
 ]
 
 MIDDLEWARE = [
@@ -178,12 +178,12 @@ sys.path = ["", EXTERNAL_LIBS_PATH, EXTERNAL_APPS_PATH] + sys.path
 
 # Magazine NewsArticle Choices
 
-# MAGAZINE_ARTICLE_THEME_CHOICES = [
-#     ('futurism', _("Futurism")),
-#     ('nostalgia', _("Nostalgia")),
-#     ('sustainability', _("Sustainability")),
-#     ('wonder', _("Wonder")),
-#     ('positivity', _("Positivity")),
-#     ('solutions', _("Solutions")),
-#     ('science', _("Science")),
-# ]
+MAGAZINE_ARTICLE_THEME_CHOICES = [
+    ('futurism', _("Futurism")),
+    ('nostalgia', _("Nostalgia")),
+    ('sustainability', _("Sustainability")),
+    ('wonder', _("Wonder")),
+    ('positivity', _("Positivity")),
+    ('solutions', _("Solutions")),
+    ('science', _("Science")),
+]
