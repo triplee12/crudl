@@ -1,0 +1,12 @@
+{% extends "crudl/base.html" %}
+{% load i18n %}
+{% block content %}
+{% for idea in ideas_object %}
+<div class="ideas">
+    <span class="idea">
+        <h1><a href="{{ idea.get_url_path }}">{{ idea.title }}</a></h1>
+        <p>{{ idea.content }}</p>
+    </span>
+</div>
+{% endfor %}
+{% endblock content %}
