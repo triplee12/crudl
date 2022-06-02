@@ -1,0 +1,8 @@
+{% extends "crudl/base.html" %}
+{% block content %}
+<form method="post" action="{% url 'ideas:add_idea' %}">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" palceholder="submit">
+</form>
+{% endblock content %}

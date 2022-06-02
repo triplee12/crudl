@@ -26,7 +26,7 @@ def add_or_change_idea(request, pk=None):
         )
         if form.is_valid():
             idea = form.save()
-            return redirect("idea:idea_detail", pk=idea.pk)
+            return redirect("ideas:idea_detail", pk=idea.pk)
     else:
         form = IdeaForm(instance=idea)
     context = {"idea": idea, "form": form}

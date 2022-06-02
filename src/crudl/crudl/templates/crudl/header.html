@@ -1,0 +1,13 @@
+{% load i18n %}
+<header>
+    <nav>
+        <ul>
+            <li>
+                <a href="{% url 'ideas:add_idea' %}">{% trans "Add idea" %}</a>
+            </li>
+            <li>
+                <a href="{% url 'login' %}">{% trans "Sign In" %}</a>
+            </li>
+        </ul>
+    </nav>
+</header>
