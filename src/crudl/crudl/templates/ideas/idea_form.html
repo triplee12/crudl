@@ -1,8 +1,8 @@
 {% extends "crudl/base.html" %}
 {% block content %}
-<form method="post" action="{% url 'ideas:add_idea' %}">
+<form method="post" action="{% url 'ideas:add_idea' %}" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form }}
+    {{ form.as_p }}
     <input type="submit" palceholder="submit">
 </form>
 {% endblock content %}

@@ -22,6 +22,6 @@ class IdeaAdmin(admin.ModelAdmin):
     fieldsets = [
         (_("Title and Content"), {
             # "fields": get_multilingual_field_names("title") + get_multilingual_field_names("content")
-            "fields": ["title", "content"]
+            "fields": ["title", "content", "author", "categories", "picture",]
         }),
     ]

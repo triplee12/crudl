@@ -1,9 +1,14 @@
 import uuid
+import contextlib
+import os
 from django.db import models
 from django.urls import reverse
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.utils.timezone import now as timezone_now
 from django.utils.translation import gettext_lazy as _
+from imagekit.models import ImageSpecField
+from pilkit.processors import ResizeToFill
 from crudl.apps.core.model_fields import TranslatedField
 from crudl.apps.core.models import (
     object_relation_base_factory as generic_relation,
@@ -15,6 +20,12 @@ from crudl.apps.core.models import (
 #     TranslatedField
 # )
 
+def upload_to(instance, filename):
+    now = timezone_now()
+    base, extension = os.path.splitext(filename)
+    extension = extension.lower()
+    return f"ideas/{now:%Y/%m}/{instance.pk}{extension}"
+
 RATING_CHOICES = (
     (1, "★☆☆☆☆"),
     (2, "★★☆☆☆"),
@@ -24,7 +35,7 @@ RATING_CHOICES = (
 )
 
 
-class Idea(models.Model):
+class Idea(CreationModificationDateBase, UrlBase):
     uuid = models.UUIDField(
         primary_key = True, default = uuid.uuid4, editable = False
     )
@@ -44,6 +55,10 @@ class Idea(models.Model):
     content = models.TextField(
         _('Content')
     )
+    picture = models.ImageField(_("Picture"), upload_to=upload_to)
+    picture_social = ImageSpecField(source="picture", processors=[ResizeToFill(1024, 512)], format="JPEG", options={"quality": 100},)
+    picture_large = ImageSpecField(source="picture", processors=[ResizeToFill(800, 400)], format="PNG")
+    picture_thumbnail = ImageSpecField(source="picture", processors=[ResizeToFill(728,250)], format="PNG")
     categories = models.ManyToManyField(
         "category.Category",
         verbose_name = _("Categories"),
@@ -52,9 +67,12 @@ class Idea(models.Model):
     rating = models.PositiveIntegerField(
         _("Rating"), choices = RATING_CHOICES, blank=True, null=True
     )
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
     # Use translateField if you don't want to keep migrating model every time you change language'
     translated_title = TranslatedField("title")
     translated_content = TranslatedField("content")
+    translated_categories = TranslatedField("categories")
     
     class Meta:
         verbose_name = _("Idea")
@@ -95,6 +113,22 @@ class Idea(models.Model):
     
     def get_url_path(self):
         return reverse("ideas:idea_detail", kwargs={"pk":self.pk})
+    
+    def delete(self, *args, **kwargs):
+        from django.core.files.storage import default_storage
+        if self.picture:
+            with contextlib.supress(FileNotFoundError):
+                default_storage.delete(
+                    self.picture_social.path
+                )
+                default_storage.delete(
+                    self.picture_large.path
+                )
+                default_storage.delete(
+                    self.picture_thumbnail.path
+                )
+            self.picture.delete()
+        super().delete(*args, **kwargs)
 
 FavoriteObjectBase = generic_relation(
     is_required = True,

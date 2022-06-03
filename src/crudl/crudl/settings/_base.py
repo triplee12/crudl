@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # third party app
     # 'social_django',
+    "imagekit",
     # Own apps
     "crudl.apps.core",
     "crudl.apps.category",
@@ -154,8 +156,8 @@ with open(os.path.join(BASE_DIR, 'crudl', 'settings', 'last-modified.txt'), 'r')
     timestamp = f.readline().strip()
 
 timestamp = get_git_changeset_timestamp(BASE_DIR)
-STATIC_URL = f'/static/{timestamp}/'
-MEDIA_URL = f'/media/{timestamp}/'
+STATIC_URL = f'/static/' # Add {timestamp} to static and media url if you want to get the latest git change timestamp
+MEDIA_URL = f'/media/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'crudl', 'crudl_static'),
 ]
