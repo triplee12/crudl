@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django.forms",
     # third party app
     # 'social_django',
     "imagekit",
@@ -80,6 +81,8 @@ TEMPLATES = [
         },
     },
 ]
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),

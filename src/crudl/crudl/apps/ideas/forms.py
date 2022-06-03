@@ -6,7 +6,7 @@ class IdeaForm(forms.ModelForm):
         model = Idea
         exclude = ["author"]
     
-    def __init_(self, request, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         self.request = request
         super().__init__(*args, **kwargs)
     
