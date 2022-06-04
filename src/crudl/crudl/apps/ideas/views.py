@@ -31,7 +31,7 @@ def add_or_change_idea(request, pk=None):
             instance = idea
         )
         translations_formset = IdeaTranslationsFormSet(
-            queryset=IdeaTranslations.objects.filter(idea=True),
+            queryset=IdeaTranslations.objects.filter(idea=idea),
             data=request.POST,
             files=request.FILES,
             prefix="translations",

@@ -45,7 +45,7 @@ class IdeaForm(forms.ModelForm):
             css_id="categories_fieldset"
         )
         inline_translations = layout.HTML(
-            """{% include 'ideas/forms/translations.htnl' %}"""
+            """{% include 'ideas/forms/translations.html' %}"""
         )
         submit_button = layout.Submit("save", _("Save"))
         actions = bootstrap.FormActions(submit_button)
@@ -72,7 +72,7 @@ class IdeaForm(forms.ModelForm):
 class IdeaTranslationsForm(forms.ModelForm):
     language = forms.ChoiceField(
         label=_("Language"),
-        choices=settings.LANGUAGES_EXCEPT_DEFAULT,
+        choices=settings.LANGUAGES,
         required=True,
     )
     
@@ -92,7 +92,7 @@ class IdeaTranslationsForm(forms.ModelForm):
             "title", css_class="input-block-level"
         )
         content_field = layout.Field(
-            "content", css_class="input-block-level"
+            "content", css_class="input-block-level", rows="3"
         )
         delete_field = layout.Field("DELETE")
         main_fieldset = layout.Fieldset(
@@ -103,7 +103,7 @@ class IdeaTranslationsForm(forms.ModelForm):
             content_field,
             delete_field,
         )
-        self.helper = helper()
+        self.helper = helper.FormHelper()
         self.helper.form_tag = False
         self.helper.disable_csrf = True
         self.helper.layout = layout.Layout(main_fieldset)

@@ -6,6 +6,7 @@ $(function () {
             func($formset_form);
         });
     }
+    
     function set_index_for_fields($formset_form, index) {
         $formset_form.find(':input').each(function () {
             var $field = $(this);
@@ -18,44 +19,37 @@ $(function () {
             if ($field.attr("name")) {
                 $field.attr(
                     "name",
-                    $field.attr("name").replace(
-                        /-__prefix__-/, "-" + index + "-"
-                    )
+                    $field.attr("name").replace(/-__prefix__-/, "-" + index + "-")
+                );
+            }
+        });
+
+        $formset_form.find('label').each(function () {
+            var $field = $(this);
+            if ($field.attr("for")) {
+                $field.attr(
+                    "for",
+                    $field.attr("for").replace(/-__prefix__-/, "-" + index + "-")
+                );
+            }
+        });
+
+        $formset_form.find("div").each(function () {
+            var $field = $(this);
+            if ($field.attr("id")) {
+                $field.attr(
+                    "id",
+                    $field.attr("id").replace(/-__prefix__-/, "-" + index + "-")
                 );
             }
         });
     }
 
-
-    $formset_form.find('label').each(function () {
-        var $field = $(this);
-        if ($field.attr("for")) {
-            $field.attr(
-                "for",
-                $field.attr("for").replace(
-                    /-__prefix__-/, "-" + index + "-"
-                )
-            );
-        }
-    });
-
-    $formset_form.find("div").each(function () {
-        var $field = $(this);
-        if ($field.attr("id")) {
-            $field.attr(
-                "id",
-                $field.attr("id").replace(
-                    /-__prefix__-/, "-" + index + "-"
-                )
-            );
-        }
-    });
-
     function add_delete_button($formset_form) {
         $formset_form.find('input:checkbox[id$=DELETE]').each(function () {
             var $checkbox = $(this);
             var $deleteLink = $(
-                '<button class="delete btn btn-sm btn-danger mb-3">Remove</button>'
+                '<button data-toggle="tooltip" title="{% trans "Remove this translation" %} class="delete btn btn-sm btn-danger mb-3">Remove</button>'
             );
             $formset_form.append($deleteLink);
             $checkbox.closest('.form-group').hide();
