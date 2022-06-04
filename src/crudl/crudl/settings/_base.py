@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django.forms",
     # third party app
+    "crispy_forms",
     # 'social_django',
     "imagekit",
     # Own apps
@@ -83,6 +84,9 @@ TEMPLATES = [
 ]
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
+
+# Crispy-form
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),

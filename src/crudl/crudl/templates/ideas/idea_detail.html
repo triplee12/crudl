@@ -4,7 +4,7 @@
 <div class="ideas">
     <div class="idea-detail">
         {% if request.user.is_authenticated and request.user == idea.author %}
-        <a href="{% url 'ideas:change_idea' pk=idea.pk %}"><button class="btn btn-red">{% trans "Change this idea" %}</button></a>
+        <a href="{% url 'ideas:change_idea' pk=idea.pk %}"><button class="btn btn-primary">{% trans "Change this idea" %}</button></a>
         {% endif %}
         <div class="image">
             <img src="{{ idea.picture_large.url }}" alt="{{ idea.title }}">

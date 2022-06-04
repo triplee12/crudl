@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
-from .forms import IdeaForm
-from .models import Idea
+from django.forms import modelformset_factory
+from .forms import IdeaForm, IdeaTranslationsForm
+from .models import Idea, IdeaTranslations
 
 
 class IdeaList(ListView):
@@ -18,6 +19,10 @@ def add_or_change_idea(request, pk=None):
     idea = None
     if pk:
         idea = get_object_or_404(Idea, pk=pk)
+    IdeaTranslationsFormSet = modelformset_factory(
+        IdeaTranslations, form=IdeaTranslationsForm,
+        extra=0, can_delete=True
+    )
     if request.method == "POST":
         form = IdeaForm(
             request,
@@ -25,12 +30,31 @@ def add_or_change_idea(request, pk=None):
             files = request.FILES,
             instance = idea
         )
-        if form.is_valid():
+        translations_formset = IdeaTranslationsFormSet(
+            queryset=IdeaTranslations.objects.filter(idea=True),
+            data=request.POST,
+            files=request.FILES,
+            prefix="translations",
+            form_kwargs={"request":request},
+        )
+        if form.is_valid() and translations_formset.is_valid():
             idea = form.save()
+            translations = translations_formset.save(commit=False)
+            for translation in translations:
+                translation.idea = idea
+                translation.save()
+            translations_formset.save_m2m()
+            for translation in translations_formset.deleted_objects:
+                translation.delete()
             return redirect("ideas:idea_detail", pk=idea.pk)
     else:
         form = IdeaForm(request, instance=idea)
-    context = {"idea": idea, "form": form}
+        translations_formset = IdeaTranslationsFormSet(
+            queryset=IdeaTranslations.objects.filter(idea=idea),
+            prefix="translations",
+            form_kwargs={"request":request},
+        )
+    context = {"idea": idea, "form": form, "translations_formset":translations_formset}
     return render(request, "ideas/idea_form.html", context)
 
 @login_required
