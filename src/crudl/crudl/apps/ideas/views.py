@@ -2,13 +2,52 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
 from django.forms import modelformset_factory
-from .forms import IdeaForm, IdeaTranslationsForm
-from .models import Idea, IdeaTranslations
+from django.conf import settings
+from .forms import IdeaForm, IdeaTranslationsForm, IdeaFilterForm
+from .models import Idea, IdeaTranslations, RATING_CHOICES
+
+PAGE_SIZE = getattr(settings, "PAGE_SIZE", 24)
+
+# class IdeaList(ListView):
+#     model = Idea
 
 
-class IdeaList(ListView):
-    model = Idea
+def idea_list(request):
+    qs = Idea.objects.order_by("title")
+    form = IdeaFilterForm(data=request.GET)
+    facets = {
+        "selected":{},
+        "categories":{
+            "author": form.fields["author"].queryset,
+            "categories" : form.fields["category"].queryset,
+            "rating": RATING_CHOICES,
+        },
+    }
+    if form.is_valid():
+        filters = (
+            # query parameter, filter parameter
+            ("author", "author"),
+            ("category", "categories"),
+            ("rating", "rating"),
+        )
+        qs = filter_facets(facets, qs, form, filters)
+    context = {"form": form, "facets": facets, "object_list": qs}
+    return render(request, "ideas/idea_list.html", context)
 
+def filter_facets(facets, qs, form, filters):
+    for query_param, filter_param in filters:
+        value = form.cleaned_data[query_param]
+        if value:
+            selected_value = value
+            if query_param =="rating":
+                rating = int(value)
+                selected_value = (
+                    rating, dict(RATING_CHOICES)[rating]
+                )
+            facets["selected"][query_param] = selected_value
+            filter_args = {filter_param: value}
+            qs = qs.filter(**filter_args).distinct()
+    return qs
 
 class IdeaDetail(DetailView):
     model = Idea
