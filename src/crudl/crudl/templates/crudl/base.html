@@ -13,6 +13,10 @@
 <body>
     <div class="container p-0 bg-gray text-black mt-0">
         {% include "crudl/header.html " %}
+        <div class="sidebar">
+            {% block sidebar%}
+            {% endblock sidebar%}
+        </div>
         <section class="content">
             {% block content %}
             {% endblock content %}
