@@ -1,5 +1,5 @@
 {% extends "crudl/base.html" %}
-{% load i18n %}
+{% load i18n json_ld %}
 {% block meta_tags %}
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ WEBSITE_URL }} {{ request.path }}" />
@@ -22,6 +22,7 @@
     {% if idea.picture_social %}
         <meta name="twitter:image" content="{{ idea.picture_social.url }}">
     {% endif %}
+    {% render_json_ld idea.structured_data %}
 {% endblock meta_tags %}
 {% block content %}
 <div class="ideas">

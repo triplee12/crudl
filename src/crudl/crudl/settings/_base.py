@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django.forms",
     # third party app
+    "django_json_ld",
     "crispy_forms",
     # 'social_django',
     "imagekit",
