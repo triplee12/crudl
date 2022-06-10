@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # third party app
     "django_json_ld",
     "crispy_forms",
+    "qr_code",
     # 'social_django',
     "imagekit",
     # Own apps

@@ -70,6 +70,26 @@ class IdeaListView(View):
         return page
 
 
+def idea_handout_pdf(request, pk):
+    from django.template.loader import render_to_string
+    from django.utils.timezone import now as timezone_now
+    from django.utils.text import slugify
+    from django.http import HttpResponse
+    from weasyprint import HTML
+    from weasyprint.fonts import FontConfiguration
+    
+    idea = get_object_or_404(Idea, pk=pk)
+    context = {"idea":idea}
+    html = render_to_string("ideas/idea_handout_pdf.html", context)
+    response = HttpResponse(content_type='application/pdf')
+    response["Content-Disposition"] = "inline; filename={dtae}-{name}-handout.pdf".format(
+        date=timezone_now().strftime("%Y-%m-%d"),
+        name=slugify(idea.translated_title),
+    )
+    font_config = FontConfiguration()
+    HTML(string=html).write_pdf(response, font_config=font_config)
+    return response
+
 # def idea_list(request):
 #     qs = Idea.objects.order_by("title")
 #     form = IdeaFilterForm(data=request.GET)

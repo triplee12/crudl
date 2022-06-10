@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap Css -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>{% trans "" %}</title>
+    <style>
+        @page{
+            size: "A4";
+            margin: 2.5cm 1.5cm 3.5cm 1.5cm;
+        }
+        footer{
+            position: fixed;
+            bottom: -2.5cm;
+            width: 100%;
+            text-align: center;
+            font-size: 10pt;
+        }
+        footer img{
+            height: 1.5cm;
+        }
+    </style>
+    {% block meta_tags %}{% endblock meta_tags %}
+</head>
+<body>
+    <main class="container">
+        {% block content %}
+        {% endblock content %}
+    </main>
+    <footer>
+        <img alt="" src="data:image/svg+xml, {# url-encoded SVG logo goes here #}" />
+    </br>
+    {% trans "Printed from Crudl" %}
+    </footer>
+</body>
+</html>
