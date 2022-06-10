@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "django_json_ld",
     "crispy_forms",
     "qr_code",
+    "haystack",
     # 'social_django',
     "imagekit",
     # Own apps
@@ -55,6 +56,7 @@ INSTALLED_APPS = [
     "crudl.apps.category",
     "crudl.apps.ideas",
     'crudl.apps.magazine',
+    "crudl.apps.search",
 ]
 
 MIDDLEWARE = [
@@ -201,3 +203,16 @@ MAGAZINE_ARTICLE_THEME_CHOICES = [
     ('solutions', _("Solutions")),
     ('science', _("Science")),
 ]
+
+# Haystack Settings
+HAYSTACK_CONNECTIONS = {}
+for lang_code, lang_name in LANGUAGES:
+    lang_code_underscored = lang_code.replace("-", "_")
+    HAYSTACK_CONNECTIONS[f"default_{lang_code_underscored}"] = {
+        "ENGINE":"crudl.apps.search.multilingual_whoosh_backend.MultilingualWhooshEngine",
+        "PATH": os.path.join(BASE_DIR, "tmp", f"whoosh_index_{lang_code_underscored}"),
+    }
+    lang_code_underscored = LANGUAGE_CODE.replace("-", "_")
+    HAYSTACK_CONNECTIONS["default"] = HAYSTACK_CONNECTIONS[
+        f"default_{lang_code_underscored}"
+    ]
