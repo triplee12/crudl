@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "qr_code",
     "haystack",
+    "django_elasticsearch_dsl",
     # 'social_django',
     "imagekit",
     # Own apps
@@ -56,7 +57,7 @@ INSTALLED_APPS = [
     "crudl.apps.category",
     "crudl.apps.ideas",
     'crudl.apps.magazine',
-    "crudl.apps.search",
+    # "crudl.apps.search",
 ]
 
 MIDDLEWARE = [
@@ -156,6 +157,21 @@ LANGUAGES = [
     ("es", "Spanish"), ("sv", "Swedish"),
 ]
 
+LANGUAGES_EXCEPT_THE_DEFAULT = [
+    ("bg", "Bulgarian"), ("hr", "Croatian"),
+    ("cs", "Czech"), ("da", "Danish"),
+    ("nl", "Dutch"),
+    ("et", "Estonian"), ("fi", "Finnish"),
+    ("fr", "French"), ("de", "German"),
+    ("el", "Greek"), ("hu", "Hungarian"),
+    ("ga", "Irish"), ("it", "Italian"),
+    ("lv", "Latvian"), ("lt", "Lithuanian"),
+    ("mt", "Maltese"), ("pl", "Polish"),
+    ("pt", "Portuguese"), ("ro", "Romanian"),
+    ("sk", "Slovak"), ("sl", "Slovene"),
+    ("es", "Spanish"), ("sv", "Swedish"),
+]
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -216,3 +232,10 @@ for lang_code, lang_name in LANGUAGES:
     HAYSTACK_CONNECTIONS["default"] = HAYSTACK_CONNECTIONS[
         f"default_{lang_code_underscored}"
     ]
+
+# Elasticsearch Dsl
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}

@@ -4,13 +4,61 @@ from django.views.generic import View, ListView, DetailView
 from django.forms import modelformset_factory
 from django.conf import settings
 from django.core.paginator import (EmptyPage, PageNotAnInteger, Paginator)
-from .forms import IdeaForm, IdeaTranslationsForm, IdeaFilterForm
+from django.utils.functional import LazyObject
+from .forms import IdeaForm, IdeaTranslationsForm, IdeaFilterForm, IdeaSearchForm
 from .models import Idea, IdeaTranslations, RATING_CHOICES
 
 PAGE_SIZE = getattr(settings, "PAGE_SIZE", 24)
 
 # class IdeaList(ListView):
 #     model = Idea
+
+
+class SearchResults(LazyObject):
+    def __init__(self, search_object):
+        self._wrapped = search_object
+    
+    def __len__(self):
+        return self._wrapped.count
+    
+    def __getitem__(self, index):
+        search_results = self._wrapped[index]
+        if isinstance(index, slice):
+            search_results = list(search_results)
+        return search_results
+
+
+def search_with_elasticsearch(request):
+    from .documents import IdeaDocument
+    from elasticsearch_dsl.query import Q
+    
+    form = IdeaSearchForm(request, data=request.GET)
+    search = IdeaDocument.search()
+    if form.is_valid():
+        value = form.cleaned_data["q"]
+        lang_code_underscored = request.LANGUAGE_CODE.replace("-", "_")
+        search = search.query(
+            Q("match_phrase", **{f"title_{lang_code_underscored}":value})
+            | Q("match_phrase", **{f"content_{lang_code_underscored}":value})
+            | Q(
+                "nested",
+                path="categories",
+                query=Q("match_phrase", **{f"categories__title_{lang_code_underscored}":value},),
+            )
+        )
+    search_results = SearchResults(search)
+    paginator = Paginator(search_results, PAGE_SIZE)
+    page_number = request.GET.get("page")
+    try:
+        page = paginator.page(page_number)
+    except PageNotAnInteger:
+        # If page is not an integer, show first page.
+        page = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range, show last existing page.
+        page = paginator.page(paginator.num_pages)
+    context = {"form":form, "object_list":page}
+    return render(request, "ideas/idea_search.html", context)
 
 
 class IdeaListView(View):

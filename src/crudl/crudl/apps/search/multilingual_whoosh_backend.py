@@ -31,6 +31,6 @@ class MultilingualWhooshSearchQuery(WhooshSearchQuery):
         super().__init__(using=using)
 
 
-class MultilingualWhoshEngine(WhooshEngine):
+class MultilingualWhooshEngine(WhooshEngine):
     backend = MultilingualWhooshSearchBackend
     query = MultilingualWhooshSearchQuery

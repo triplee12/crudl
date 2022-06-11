@@ -9,6 +9,23 @@ from .models import Idea, IdeaTranslations, RATING_CHOICES
 
 User = get_user_model()
 
+
+class IdeaSearchForm(forms.Form):
+    q = forms.CharField(label=_("Search for"), required=False)
+
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super().__init__(*args, **kwargs)
+        
+        self.helper = helper.FormHelper()
+        self.helper.form_action = self.request.path
+        self.helper.form_method = "GET"
+        self.helper.layout = layout.Layout(
+            layout.Field("q", css_class="input-block-level"),
+            layout.submit("search", _("Search")),
+        )
+
+
 class IdeaForm(forms.ModelForm):
     class Meta:
         model = Idea
@@ -96,7 +113,7 @@ class IdeaFilterForm(forms.Form):
 class IdeaTranslationsForm(forms.ModelForm):
     language = forms.ChoiceField(
         label=_("Language"),
-        choices=settings.LANGUAGES,
+        choices=settings.LANGUAGES_EXCEPT_THE_DEFAULT,
         required=True,
     )
     
