@@ -3,7 +3,7 @@
 {% block sidebar%}
     {% include "ideas/includes/filters.html" %}
 {% endblock sidebar%}
-{% block content %}
+{% block main %}
 <h1>{% trans "Ideas" %}</h1>
 {% if object_list %}
     {% for idea in object_list %}
@@ -23,4 +23,4 @@
 {% else %}
     <p>{% trans "There are no ideas yet." %}</p>
 {% endif %}
-{% endblock content %}
+{% endblock main %}
