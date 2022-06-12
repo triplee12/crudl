@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "qr_code",
     "haystack",
     "django_elasticsearch_dsl",
+    "sekizai",
     # 'social_django',
     "imagekit",
     # Own apps
@@ -86,6 +87,7 @@ TEMPLATES = [
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
                 "crudl.apps.core.context_processors.website_url",
+                "sekizai.context_processors.sekizai",
             ],
         },
     },
