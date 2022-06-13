@@ -8,9 +8,11 @@ from crudl.apps.core import views as core_views
 
 urlpatterns = i18n_patterns(
     path("", lambda request: redirect("ideas:idea_list")),
+    # path("", lambda request: redirect("locations:location_list")),
     path('admin/', admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("ideas/", include(("crudl.apps.ideas.urls", "ideas"), namespace="ideas")),
+    path("locations/", include(("crudl.apps.locations.urls", "locations"), namespace="locations")),
     path("search/", include("haystack.urls")),
     path("js_settings/", core_views.js_settings, name="js_settings"),
 )

@@ -58,7 +58,8 @@ INSTALLED_APPS = [
     "crudl.apps.category",
     "crudl.apps.ideas",
     'crudl.apps.magazine',
-    # "crudl.apps.search",
+    "crudl.apps.search",
+    "crudl.apps.locations",
 ]
 
 MIDDLEWARE = [
@@ -88,6 +89,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "crudl.apps.core.context_processors.website_url",
                 "sekizai.context_processors.sekizai",
+                "crudl.apps.core.context_processors.google_maps",
             ],
         },
     },
@@ -110,7 +112,7 @@ WSGI_APPLICATION = 'crudl.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
         'NAME': get_secret('DATABASE_NAME'),
         'USER': get_secret('DATABASE_USER'),
         'PASSWORD': get_secret('DATABASE_PASSWORD'),
@@ -119,6 +121,8 @@ DATABASES = {
     }
 }
 
+# GOOGLE API CONFIGURATIONS
+GOOGLE_MAPS_API_KEY = get_secret("GOOGLE_MAPS_API_KEY")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
