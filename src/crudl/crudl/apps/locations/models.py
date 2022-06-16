@@ -1,15 +1,25 @@
+import contextlib
+import os
 import uuid
 from collections import namedtuple
 from django.contrib.gis.db import models
 from django.urls import reverse
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from imagekit.models import ImageSpecField
+from pilkit.processors import ResizeToFill
 from crudl.apps.core.models import (
     CreationModificationDateBase, UrlBase
 )
 
 COUNTRY_CHOICES = getattr(settings, "COUNTRY_CHOICES", [])
 Geoposition = namedtuple("Geoposition", ["longitude", "latitude"])
+
+def upload_to(instance, filename):
+    now = timezone_now()
+    base, extension = os.path.splitext(filename)
+    extension = extension.lower()
+    return f"locations/{now:%Y/%m}/{instance.pk}{extension}"
 
 
 class Location(CreationModificationDateBase, UrlBase):
@@ -22,6 +32,11 @@ class Location(CreationModificationDateBase, UrlBase):
     city = models.CharField(_("City"), max_length=255, blank=True)
     country = models.CharField(_("Country"),choices=COUNTRY_CHOICES, max_length=255, blank=True)
     geoposition = models.PointField(blank=True, null=True)
+    picture = models.ImageField(_("Picture"), upload_to=upload_to)
+    picture_desktop = ImageSpecField(source="picture",processors=[ResizeToFill(1200, 600)],format="JPEG",options={"quality": 100},)
+    picture_tablet = ImageSpecField(source="picture", processors=[ResizeToFill(768, 384)],format="PNG")
+    picture_mobile = ImageSpecField(source="picture", processors=[ResizeToFill(640, 320)],format="PNG")
+
 
     class Meta:
         verbose_name = _("Location")
@@ -79,3 +94,13 @@ class Location(CreationModificationDateBase, UrlBase):
     def set_geoposition(self, longitude, latitude):
         from django.contrib.gis.geos import Point
         self.geoposition = Point(longitude, latitude, srid=4326)
+    
+    def delete(self, *args, **kwargs):
+        from django.core.files.storage import default_storage
+        if self.picture:
+            with contextlib.suppress(FileNotFoundError):
+                default_storage.delete(self.picture_desktop.path)
+                default_storage.delete(self.picture_tablet.path)
+                default_storage.delete(self.picture_mobile.path)
+            self.picture.delete()
+        super().delete(*args, **kwargs)
