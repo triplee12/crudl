@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'crudl.apps.magazine',
     "crudl.apps.search",
     "crudl.apps.locations",
+    "crudl.apps.likes",
 ]
 
 MIDDLEWARE = [
