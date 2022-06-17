@@ -1,16 +1,58 @@
 {% extends "crudl/base.html" %}
 {% load i18n %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'site/css/rating.css' %}">
+{% endblock css %}
 {% block content %}
-    <h1>{% trans "Interesting Locations" %}</h1>
-    {% if object_list %}
-        <ul>
-            {% for location in object_list %}
-                <li>
-                    <a href="{{ location.get_url_path }}">{{ location.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>{% trans "There ara no locations yet." %}</p>
-    {% endif %}
+<div class="row">
+    <div class="col-lg-8">
+        <h1>{% trans "Interesting Locations" %}</h1>
+        {% if object_list %}
+            <div>
+                {% for location in object_list %}
+                    <a href="{{ location.get_url_path }}" class="item d-block my-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="float-right">
+                                    <div class="rating" aria-label="{% clocktrans with stars=location.rating %} {{ stars }} of 5 stars {% endblocktrans %}">
+                                        <span style="width:{{ location.get_rating_percentage }}%"></span>
+                                    </div>
+                                </div>
+                                <p class="card-text">{{ location.name }}<br/>
+                                    <small>{{ location.city }}, {{ location.get_country_display }}</small>
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <div class="text-center">
+                        <div class="loading-indicator"></div>
+                    </div>
+                    <p class="pagination">
+                        <a class="next-page" href="{% mofify_query page=page_obj.next_page.number %}">
+                            {% trans "More..." %}
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>{% trans "There ara no locations yet." %}</p>
+        {% endif %}
+    </div>
+    <div class="col-lg-4">
+        {% include "locations/includes/navigation.html" %}
+    </div>
+</div>
 {% endblock content %}
+{% block js %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jscroll/2.3.9/jquery.jscroll.min.js"></script>
+    <script src="{% static 'site/js/list.js' %}"></script>
+{% endblock js %}
+{% block extra_body %}
+    <script type="text/template" class="loader">
+        <div class="text-center">
+            <div class="loading-indicator"></div>
+        </div>
+    </script>
+{% endblock extra_body %}

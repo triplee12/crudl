@@ -5,6 +5,7 @@ from collections import namedtuple
 from django.contrib.gis.db import models
 from django.urls import reverse
 from django.conf import settings
+from django.utils.timezone import now as timezone_now
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ImageSpecField
 from pilkit.processors import ResizeToFill
@@ -14,6 +15,13 @@ from crudl.apps.core.models import (
 
 COUNTRY_CHOICES = getattr(settings, "COUNTRY_CHOICES", [])
 Geoposition = namedtuple("Geoposition", ["longitude", "latitude"])
+RATING_CHOICES = (
+    (1, "★☆☆☆☆"),
+    (2, "★★☆☆☆"),
+    (3, "★★★☆☆"),
+    (4, "★★★★☆"),
+    (5, "★★★★★")
+)
 
 def upload_to(instance, filename):
     now = timezone_now()
@@ -36,6 +44,7 @@ class Location(CreationModificationDateBase, UrlBase):
     picture_desktop = ImageSpecField(source="picture",processors=[ResizeToFill(1200, 600)],format="JPEG",options={"quality": 100},)
     picture_tablet = ImageSpecField(source="picture", processors=[ResizeToFill(768, 384)],format="PNG")
     picture_mobile = ImageSpecField(source="picture", processors=[ResizeToFill(640, 320)],format="PNG")
+    rating = models.PositiveIntegerField(_("Rating"), choices=RATING_CHOICES, blank=True, null=True)
 
 
     class Meta:
@@ -104,3 +113,6 @@ class Location(CreationModificationDateBase, UrlBase):
                 default_storage.delete(self.picture_mobile.path)
             self.picture.delete()
         super().delete(*args, **kwargs)
+    
+    def get_rating_percentage(self):
+        return self.rating * 20 if self.rating is not None else None
