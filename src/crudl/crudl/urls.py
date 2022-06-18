@@ -15,6 +15,7 @@ urlpatterns = i18n_patterns(
     path("locations/", include(("crudl.apps.locations.urls", "locations"), namespace="locations")),
     path("search/", include("haystack.urls")),
     path("js_settings/", core_views.js_settings, name="js_settings"),
+    path("upload-file/", core_views.upload_file, name="upload_file"),
     path("likes/", include(("myproject.apps.likes.urls", "likes"), namespace="likes")),
 )
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

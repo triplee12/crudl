@@ -1,7 +1,14 @@
+import os
 import json
-from django.http import HttpResponse
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+from django.http import HttpResponse, JsonResponse
+from django.core.exceptions import SuspiciousOperation
+from django.urls import reverse
 from django.template import Context, Template
 from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import crsf_protect
+from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.shortcuts import render
 
@@ -27,3 +34,32 @@ def js_settings(request):
         content_type="application/javascript; charset=UTF-8"
     )
     return response
+
+@crsf_protect
+def upload_file(request):
+    status_code = 400
+    data = {"files": [], "error": _("Bad request")}
+    if request.method == "POST" and request.is_ajax() and "picture" in request.FILES:
+        file_types = [f"image/{x}" for x in ["gif", "jpg", "jpeg", "png"]]
+        file = request.FILES.get("picture")
+        if file.content_type not in file_types:
+            status_code = 405
+            data["error"] = _("Invalid file format")
+        else:
+            upload_to = os.path.join("temporary-uploads", file.name)
+            name = default_storage.save(upload_to, ContentFile(file.read()))
+            file = default_storage.open(name)
+            status_code = 200
+            del data["error"]
+            absolute_uploads_dir = os.path.join(settings.MEDIA_ROOT, "temporary-uploads")
+            file.filename = os.path.basename(file.name)
+            data["files"].append(
+                {
+                    "name": file.filename,
+                    "size": file.size,
+                    "deleteType": "DELETE",
+                    "deleteUrl": (reverse("delete_file") + f"?filename={file.filename}"),
+                    "path": file.name[len(absolute_uploads_dir) + 1 :],
+                }
+            )
+    return JsonResponse(data, status=status_code)
