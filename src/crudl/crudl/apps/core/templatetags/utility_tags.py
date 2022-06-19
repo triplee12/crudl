@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 from django import template
+from django.template import get_template
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -76,3 +77,38 @@ def humanize_url(url, letter_count=40):
     if len(url) > letter_count:
         url = f"{url[:letter_count - 1]}..."
     return url
+
+
+class IncludeNode(template.Node):
+    def __init__(self, template_name):
+        self.template_name = template.Variable(template_name)
+    
+    def render(self, context):
+        try:
+            # Loading the template and rendering it
+            included_template = self.template_name.resolve(context)
+            if isinstance(included_template, str):
+                included_template = get_template(included_template)
+            rendered_template = included_template.render(
+                context.flatten()
+            )
+        except (template.TemplateDoesNotExist, template.VariableDoesNotExist, AttributeError):
+            rendered_template = ""
+        return rendered_template
+
+
+@register.tag
+def try_to_include(parser, token):
+    """
+    Usage: {% try_to_include "some_template.html" %}
+    this will fail silently if the template doesn't exist.
+    If it does exist, it will be rendered with the current context
+    """
+    try:
+        tag_name, template_name = token.split_contents()
+    except ValueError:
+        tag_name = token.contents.split()[0]
+        raise template.TemplateSyntaxError(
+            f"{tag_name} tag requires a single argument"
+        )
+    return IncludeNode(template_name)
