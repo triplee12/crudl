@@ -12,6 +12,7 @@ urlpatterns = i18n_patterns(
     path('admin/', admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("ideas/", include(("crudl.apps.ideas.urls", "ideas"), namespace="ideas")),
+    path("news/", include(("crudl.apps.news.urls", "news"), namespace="news")),
     path("locations/", include(("crudl.apps.locations.urls", "locations"), namespace="locations")),
     path("search/", include("haystack.urls")),
     path("js_settings/", core_views.js_settings, name="js_settings"),
