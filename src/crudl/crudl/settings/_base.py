@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "haystack",
     "django_elasticsearch_dsl",
     "sekizai",
+    "ordered_model",
     # 'social_django',
     "imagekit",
     # Own apps

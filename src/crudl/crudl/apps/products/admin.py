@@ -1,21 +1,143 @@
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, NamedStyle, builtins
+from openpyxl.styles.numbers import FORMAT_NUMBER
+from openpyxl.writer.excel import save_virtual_workbook
 from django.contrib import admin
+from django.http.response import HttpResponse
 from django.template.loader import render_to_string
 from django.utils.html import mark_safe
 from django.utils.translation import  gettext_lazy as _
+from ordered_model.admin import  OrderedTabularInline, OrderedInlineModelAdminMixin
 from .models import Product, ProductPhoto
 
+ZERO = "zero"
+ONE = "one"
+MANY = "many"
 
-class ProductPhotoInline(admin.StackedInline):
+
+class PhotoFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = _("photos")
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = "photos"
+    
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples, akin to the values given for
+        model field choices. The first element in each tuple is the
+        coded value for the option that will appear in the URL
+        query. The second element is the human-readable name for
+        the option that will appear in the right sidebar.
+        """
+        return (
+            (ZERO, _("Has no photos")),
+            (ONE, _("Has one photo")),
+            (MANY, _("Has more than one photo")),
+        )
+    
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via self.value().
+        """
+        qs = queryset.annotate(num_photos=models.Count("productphoto"))
+        if self.value() == ZERO:
+            qs = qs.filter(num_photos=0)
+        elif self.value() == ONE:
+            qs =qs.filter(num_photos=1)
+        elif self.value() == MANY:
+            qs = qs.filter(num_photos__gte=2)
+        return qs
+
+
+class ColumnConfig:
+    def def __init__(self, heading, width=None, heading_style="Headline 1", style="Normal Wrapper", number_format=None):
+        self.heading = heading
+        self.width = width
+        self.heading_style = heading_style
+        self.style = style
+        self.number_format = number_format
+
+
+def export_xlsx(modeladmin, request, queryset):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Products"
+    
+    number_alignment = Alignment(horizontal="right")
+    wb.add_named_style(
+        NamedStyle(
+            "Identifier", alignment=number_alignment,
+            number_format=FORMAT_NUMBER
+        )
+    )
+    wb.add_named_style(
+        NamedStyle("Normal Wrapper", alignment=Alignment(wrap_text=True))
+    )
+    column_config = {
+        "A": ColumnConfig("ID", width=10, style="Identifier"),
+        "B": ColumnConfig("Title", width=30),
+        "C": ColumnConfig("Description", width=60),
+        "D": ColumnConfig("Price", width=15, style="Currency", number_format="#,##0.00 $"),
+        "E": ColumnConfig("Preview", width=100, style="Hyperlink"),
+    }
+    # set up column widths, header values and styles
+    for col, conf in column_config.items():
+        ws.column_dimensions[col].width = conf.width
+        column = ws[f"{col}"]
+        column.value = conf.heading
+        column.style = conf.heading_style
+    # Add products
+    for obj in queryset.order_by("pk"):
+        project_photos = obj.productphoto_set.all()[:1]
+        url = ""
+        if project_photos:
+            url = project_photos[0].photo.url
+        data = [obj.pk, obj.title, obj.description, obj.price, url]
+        ws.append(data)
+        row  = ws.max_row
+        for row_cells in ws.iter_cols(min_row=row, max_row=row):
+            for cell in row_cells:
+                conf = column_config[cell.column_letter]
+                cell.style = conf.style
+                if conf.number_format:
+                    cell.number_format = conf.number_format
+    mimetype = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    charset = "utf-8"
+    response = HttpResponse(
+        content=save_virtual_workbook(wb),
+        content_type=f"{mimetype}; charset={charset}",
+        charset=charset,
+    )
+    response["Content-Disposition"] = "attachment; filename=products.xlsx"
+    return response
+export_xlsx.short_description = _("Export XLSX")
+
+
+class ProductPhotoInline(OrderedTabularInline):
     model = ProductPhoto
     extra = 0
-    fields = ["photo"]
+    fields = ("photo_preview", "photo", "order", "move_up_down_likes")
+    readonly_fields = ("photo_preview", "order", "move_up_down_links")
+    ordering = ("order",)
+    
+    def get_photo_preview(self, obj):
+        photo_preview = render_to_string(
+            "admin/products/includes/photo-preview.html",
+            {"photo": obj, "product": obj.product},
+        )
+        return mark_safe(photo_preview)
+    get_photo_preview.short_description = _("Preview")
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(OrderedInlineModelAdminMixin, admin.ModelAdmin):
     list_display = ["first_photo", "title", "has_description", "price"]
     list_display_links = ["first_photo", "title"]
     list_editable = ["price"]
+    list_filter = [PhotoFilter]
+    actions = [export_xlsx]
     fieldsets = (
         (_("Product"), {"fields": ("title", "slug", "description", "price")}),
     )

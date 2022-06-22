@@ -37,8 +37,9 @@ class Product(UrlBase):
 class ProductPhoto(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     photo = models.ImageField(_("photo"), upload_to=product_photo_upload_to)
+    order_with_respect_to = "product"
 
-    class Meta:
+    class Meta(OrderedModel.Meta):
         verbose_name = _("Photo")
         verbose_name_plural = _("Photos")
     
