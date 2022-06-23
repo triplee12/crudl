@@ -52,9 +52,10 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl",
     "sekizai",
     "ordered_model",
-    # 'social_django',
+    'crudl.apps.accounts.apps.SocialDjangoConfig',
     "imagekit",
     # Own apps
+    "crudl.apps.accounts",
     "crudl.apps.core",
     "crudl.apps.category",
     "crudl.apps.ideas",
@@ -209,7 +210,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Social Auth
-# SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
 
 # External modules
 EXTERNAL_BASE = os.path.join(BASE_DIR, 'externals')
