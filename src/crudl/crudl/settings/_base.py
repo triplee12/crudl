@@ -5,6 +5,9 @@ import sys
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from crudl.apps.utils.versioning import get_git_changeset_timestamp
+from crudl.apps.auth_extra.password_validation import (
+    SpecialCharacterInclusionValidator,
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -45,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "django.forms",
     # third party app
+    #"admin_honeypot",
+    "myproject.apps.admin_honeypot_fix.apps.AdminHoneypotConfig",
     "django_json_ld",
     "crispy_forms",
     "qr_code",
@@ -64,6 +69,8 @@ INSTALLED_APPS = [
     "crudl.apps.locations",
     "crudl.apps.likes",
     "crudl.apps.products",
+    "crudl.apps.admin_honeypot_fix",
+    "crudl.apps.auth_extra",
 ]
 
 MIDDLEWARE = [
@@ -74,6 +81,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    "csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = 'crudl.urls'
@@ -134,15 +143,25 @@ GOOGLE_MAPS_API_KEY = get_secret("GOOGLE_MAPS_API_KEY")
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "OPTIONS": {"min_similarity": 0.5},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "OPTIONS": {"min_length": 12},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+    {
+        "NAME": "crudl.apps.auth_extra.password_validation.MaximumLengthValidator",
+        "OPTIONS": {"max_length": 32},
+    },
+    {
+        "NAME": "crudl.apps.auth_extra.password_validation.SpecialCharacterInclusionValidator",
+        "OPTIONS": {"special_chars": ("{", "}", "^", "&") + SpecialCharacterInclusionValidator.DEFAULT_SPECIAL_CHARACTERS},
     },
 ]
 
@@ -249,3 +268,17 @@ ELASTICSEARCH_DSL={
         'hosts': 'localhost:9200'
     },
 }
+
+# CSP Config
+CSP_DEFAULT_SRC = [
+    "'self'",
+    "https://stackpath.bootstrapcdn.com/",
+]
+CSP_SCRIPT_SRC = [
+    "'self'",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://code.jquery.com/",
+    "https://cdnjs.cloudflare.com/",
+]
+CSP_IMG_SRC = ["*", "data:"]
+CSP_FRAME_SRC = ["*"]

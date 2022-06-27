@@ -9,7 +9,7 @@ from crudl.apps.core import views as core_views
 urlpatterns = i18n_patterns(
     path("", lambda request: redirect("ideas:idea_list")),
     # path("", lambda request: redirect("locations:location_list")),
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path("ideas/", include(("crudl.apps.ideas.urls", "ideas"), namespace="ideas")),
     path("news/", include(("crudl.apps.news.urls", "news"), namespace="news")),
@@ -18,6 +18,9 @@ urlpatterns = i18n_patterns(
     path("js_settings/", core_views.js_settings, name="js_settings"),
     path("upload-file/", core_views.upload_file, name="upload_file"),
     path("likes/", include(("myproject.apps.likes.urls", "likes"), namespace="likes")),
+    path("admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
+    path("management/", admin.site.urls),
+
 )
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
