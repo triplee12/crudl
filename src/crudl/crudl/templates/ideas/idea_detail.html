@@ -32,9 +32,13 @@
         <a href="{% url 'ideas:delete_idea' pk=idea.pk %}" class="btn btn-danger">{% trans "Delete this idea" %}</a>
         {% endif %}
         <div class="image">
-            <img src="{{ idea.picture_large.url }}" alt="{{ idea.title }}">
+            <img src="{{ idea.watermarked_picture_large.url }}" alt="{{ idea.title }}" />
         </div>
-        <h1 class="title">{{ idea.title }}</h1>
+        <h1 class="title">
+            {% blocktrans trimmed with title=idea.translated_title %} 
+                {{ idea.title }}
+            {% endblocktrans %}
+        </h1>
         <p>
             {% for category in idea.categories.all %}
                 <span class="badge badge-pill badge-info">
@@ -45,6 +49,7 @@
         <div class="content">{{ idea.content }}</div>
         <span class="rating">{{ idea.rating }}</span>
         <div class="author">{{ idea.author.username }}</div>
+        <a href="{% url 'ideas:download_idea_picture' pk=idea.pk %}" class="btn btn-primary">{% trans "Download picture" %}</a>
     </div>
 </div>
 {% endblock content %}

@@ -1,9 +1,10 @@
 {% extends "crudl/base.html" %}
+{% load i18n %}
 {% block content %}
-<form method="post" action="{% url 'login' %}">
+<h1>{% trans "Login" %}</h1>
+<form method="post" action="{{ request.path }}">
     {% csrf_token %}
-    <input type="text" name="username" placeholder="username">
-    <input type="password" name="password" autocomplete="false" placeholder="password">
-    <input type="submit" placeholder="submit">
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">{% trans "Log in" %}</button>
 </form>
 {% endblock content %}

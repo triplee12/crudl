@@ -1,14 +1,31 @@
+import os
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import FileResponse, HttpResponseNotFound
 from django.views.generic import View, ListView, DetailView
 from django.forms import modelformset_factory
 from django.conf import settings
 from django.core.paginator import (EmptyPage, PageNotAnInteger, Paginator)
 from django.utils.functional import LazyObject
+from django.utils.text import slugify
 from .forms import IdeaForm, IdeaTranslationsForm, IdeaFilterForm, IdeaSearchForm
 from .models import Idea, IdeaTranslations, RATING_CHOICES
 
 PAGE_SIZE = getattr(settings, "PAGE_SIZE", 24)
+
+@login_required
+def download_idea_picture(request, pk):
+    idea = get_object_or_404(Idea,pk=pk)
+    if idea.picture:
+        filename, extension = os.path.splitext(idea.picture.file.name)
+        extension = extension[1:] # remove the dot
+        response = FileResponse(idea.picture.file, content_type=f"image/{extension}")
+        slug = slugify(idea.title)[:100]
+        response["Content-Disposition"] = (f"attachment; filename={slug}.{extension}")
+    else:
+        response = HttpResponseNotFound(content="Picture unavaliable")
+    return response
+
 
 # class IdeaList(ListView):
 #     model = Idea

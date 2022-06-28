@@ -14,6 +14,7 @@ from crudl.apps.core.models import (
     object_relation_base_factory as generic_relation,
     CreationModificationDateBase, UrlBase
 )
+from crudl.apps.core.processors import WatermarkOverlay
 # from crudl.apps.core.model_fields import (
 #     MultilingualTextField,
 #     MultilingualCharField,
@@ -56,6 +57,14 @@ class Idea(CreationModificationDateBase, UrlBase):
         _('Content')
     )
     picture = models.ImageField(_("Picture"), upload_to=upload_to)
+    watermarked_picture_large = ImageSpecField(
+        source="picture", processors=[
+            ResizeToFill(800, 400), WatermarkOverlay(
+                watermark_image=os.path.join(settings.STATIC_ROOT, 'site', 'img', 'watermark.png'),
+            )
+        ],
+        format="PNG"
+    )
     picture_social = ImageSpecField(source="picture", processors=[ResizeToFill(1024, 512)], format="JPEG", options={"quality": 100},)
     picture_large = ImageSpecField(source="picture", processors=[ResizeToFill(800, 400)], format="PNG")
     picture_thumbnail = ImageSpecField(source="picture", processors=[ResizeToFill(728,250)], format="PNG")
