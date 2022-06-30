@@ -146,6 +146,28 @@ DATABASES = {
     }
 }
 
+# Memcached Config
+# CACHES = {
+#     "memcached": {
+#         "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+#         "LOCATION": get_secret("CACHE_LOCATION"),
+#         "TIMEOUT": 60, # 1 minute timeout
+#         "KEY_PREFIX": "crudl",
+#     },
+# }
+# CACHES["default"] = CACHES["memcached"]
+
+# REDIS CACHES
+CACHES = {
+    "redis": {
+        "BACKEND": "redis_cache.RedisCache",
+        "LOCATION": get_secret("CACHE_LOCATION"),
+        "TIMEOUT": 60, # 1 minute timeout
+        "KEY_PREFIX": "crudl",
+    },
+}
+CACHES["default"] = CACHES["redis"]
+
 # GOOGLE API CONFIGURATIONS
 GOOGLE_MAPS_API_KEY = get_secret("GOOGLE_MAPS_API_KEY")
 
