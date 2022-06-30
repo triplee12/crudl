@@ -5,8 +5,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
 from crudl.apps.core import views as core_views
+from crudl.apps.external_auth.views import (index, dashboard, logout)
 
 urlpatterns = i18n_patterns(
+    path("", index, name="index"),
+    path("dashboard/", dashboard, name="dashboard"),
+    path("logout/", logout, name="logout"),
+    path("", include("social_django.urls")),
     path("", lambda request: redirect("ideas:idea_list")),
     # path("", lambda request: redirect("locations:location_list")),
     #path('admin/', admin.site.urls),

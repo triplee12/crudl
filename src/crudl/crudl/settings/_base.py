@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 import json
 import sys
+from telnetlib import AUTHENTICATION
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 from crudl.apps.utils.versioning import get_git_changeset_timestamp
@@ -59,6 +60,7 @@ INSTALLED_APPS = [
     "ordered_model",
     'crudl.apps.accounts.apps.SocialDjangoConfig',
     "imagekit",
+    "social_django",
     # Own apps
     "crudl.apps.accounts",
     "crudl.apps.core",
@@ -71,6 +73,7 @@ INSTALLED_APPS = [
     "crudl.apps.products",
     "crudl.apps.admin_honeypot_fix",
     "crudl.apps.auth_extra",
+    "crudl.apps.external_auth",
 ]
 
 MIDDLEWARE = [
@@ -103,10 +106,19 @@ TEMPLATES = [
                 "crudl.apps.core.context_processors.website_url",
                 "sekizai.context_processors.sekizai",
                 "crudl.apps.core.context_processors.google_maps",
+                "crudl.apps.external_auth.context_processors.auth0",
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = {
+    "crudl.apps.external_auth.backends.Auth0",
+    "django.contrib.auth.backends.ModelBackend",
+}
+
+LOGIN_URL = "/login/auth0"
+LOGIN_REDIRECT_URL = "dashboard"
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
@@ -282,3 +294,10 @@ CSP_SCRIPT_SRC = [
 ]
 CSP_IMG_SRC = ["*", "data:"]
 CSP_FRAME_SRC = ["*"]
+
+# Social Config
+SOCIAL_AUTH_AUTH0_DOMAIN = get_secret("AUTH0_DOMAIN")
+SOCIAL_AUTH_AUTH0_KEY = get_secret("AUTH0_KEY")
+SOCIAL_AUTH_AUTH0_SECRET = get_secret("AUTH0_SECRET")
+SOCIAL_AUTH_AUTH0_SCOPE = get_secret("AUTH0_SCOPE")
+SOCIAL_AUTH_TRAILING_SLASH = False
