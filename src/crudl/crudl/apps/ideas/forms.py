@@ -1,10 +1,15 @@
+from re import template
 from django import forms
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
 from crispy_forms import bootstrap, helper, layout
+from pkg_resources import require
+from mptt.forms import TreeNodeChoiceField
 from crudl.apps.category.models import Category
+from crudl.apps.core.form_fields import MultipleChoiceTreeField
 from .models import Idea, IdeaTranslations, RATING_CHOICES
 
 User = get_user_model()
@@ -27,6 +32,11 @@ class IdeaSearchForm(forms.Form):
 
 
 class IdeaForm(forms.ModelForm):
+    categories = MultipleChoiceTreeField(
+        label= _("Categories"),
+        required=False,
+        queryset=Category.objects.all(),
+    )
     class Meta:
         model = Idea
         exclude = ["author"]
@@ -59,7 +69,8 @@ class IdeaForm(forms.ModelForm):
             css_id="picture_fieldset",
         )
         categories_field = layout.Field(
-            "categories", css_class="input-block-level"
+            "categories",
+            template = "core/includes/checkboxselectmultiple_tree.html",
         )
         categories_fieldset = layout.Fieldset(
             _("Categories"), categories_field,
@@ -98,16 +109,28 @@ class IdeaFilterForm(forms.Form):
             idea_count=models.Count("authored_ideas")
         ).filter(idea_count__gt=0)
     )
-    category = forms.ModelChoiceField(
+    category = TreeNodeChoiceField(
         label =_("Category"),
         required=False,
-        queryset = Category.objects.annotate(
-            idea_count=models.Count("category_ideas")
-        ).filter(idea_count__gt=0)
+        queryset = Category.objects.all(),
+        level_indicator = mark_safe("&nbsp;&nbsp;&nbsp;&nbsp;")
     )
     rating = forms.ChoiceField(
         label =_("Rating"), required=False, choices=RATING_CHOICES
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        author_field = layout.Field("author")
+        category_field = layout.Field("category")
+        rating_field = layout.Field("rating")
+        submit_button = layout.Submit("filter", _("Filter"))
+        actions = bootstrap.FormActions(submit_button)
+        main_fieldset = layout.Fieldset(_("Filter"), author_field, category_field, rating_field, actions,)
+
+        self.helper = helper.FormHelper()
+        self.helper.form_method = "GET"
+        self.helper.layout = layout.Layout(main_fieldset)
 
 
 class IdeaTranslationsForm(forms.ModelForm):

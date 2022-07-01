@@ -61,6 +61,9 @@ INSTALLED_APPS = [
     'crudl.apps.accounts.apps.SocialDjangoConfig',
     "imagekit",
     "social_django",
+    "mptt",
+    "django_mptt_admin",
+    "treebeard",
     # Own apps
     "crudl.apps.accounts",
     "crudl.apps.core",

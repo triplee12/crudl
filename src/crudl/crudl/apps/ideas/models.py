@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now as timezone_now
 from django.utils.translation import gettext_lazy as _
 from imagekit.models import ImageSpecField
+# from mptt.fields import TreeManyToManyField
 from pilkit.processors import ResizeToFill
 from crudl.apps.core.model_fields import TranslatedField
 from crudl.apps.core.models import (

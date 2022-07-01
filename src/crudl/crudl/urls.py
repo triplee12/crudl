@@ -1,3 +1,4 @@
+from nis import cat
 from django.contrib import admin
 from django.conf.urls.i18n import i18n_patterns
 from django.urls import path, include
@@ -6,6 +7,7 @@ from django.conf.urls.static import static
 from django.shortcuts import redirect
 from crudl.apps.core import views as core_views
 from crudl.apps.external_auth.views import (index, dashboard, logout)
+from crudl.apps.category import views as category_views
 
 urlpatterns = i18n_patterns(
     path("", index, name="index"),
@@ -25,6 +27,7 @@ urlpatterns = i18n_patterns(
     path("likes/", include(("myproject.apps.likes.urls", "likes"), namespace="likes")),
     path("admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
     path("management/", admin.site.urls),
+    path("idea-categories/", category_views.IdeaCategoryListView.as_view(), name="idea_categories",),
 
 )
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

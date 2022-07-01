@@ -1,7 +1,8 @@
 {% extends "crudl/base.html" %}
-{% load i18n utility_tags %}
+{% load i18n utility_tags crispy_forms_tags %}
 {% block sidebar%}
     {% include "ideas/includes/filters.html" %}
+    {% crispy form %}
 {% endblock sidebar%}
 {% block main %}
 <h1>{% trans "Ideas" %}</h1>

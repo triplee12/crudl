@@ -1,15 +1,25 @@
+from multiprocessing import parent_process
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+# from mptt.models import MPTTModel
+# from mptt.fields import TreeForeignKey
+from treebeard.mp_tree import MP_Node
+from crudl.apps.core.models import CreationModificationDateBase
 from crudl.apps.core.model_fields import TranslatedField
 
 
-class Category(models.Model):
+class Category(MP_Node, CreationModificationDateBase):
+    # parent = TreeForeignKey("self", on_delete=models.CASCADE, blank=True, null=True, related_name="children")
     title = models.CharField(_("Title"),max_length=200)
     translated_title = TranslatedField("title")
     
     class Meta:
+        # ordering = ["tree_id", "lft"]
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
+    
+    class MPTTMeta:
+        order_insertion_by = ["title"]
     
     def __str__(self):
         return self.title

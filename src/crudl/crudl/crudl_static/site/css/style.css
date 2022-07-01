@@ -35,3 +35,12 @@
         transform: rotate(360deg);
     }
 }
+.level-0 {
+    margin-left: 0;
+}
+.level-1 {
+    margin-left: 20px;
+}
+.level-2 {
+    margin-left: 40px;
+}
