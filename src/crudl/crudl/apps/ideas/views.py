@@ -141,7 +141,7 @@ def idea_handout_pdf(request, pk):
     from django.utils.text import slugify
     from django.http import HttpResponse
     from weasyprint import HTML
-    from weasyprint.fonts import FontConfiguration
+    from weasyprint.text.fonts import FontConfiguration
     
     idea = get_object_or_404(Idea, pk=pk)
     context = {"idea":idea}
