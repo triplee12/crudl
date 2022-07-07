@@ -5,11 +5,32 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.shortcuts import redirect
+from django.contrib.sitemaps import views as sitemaps_views
+from django.contrib.sitemaps import GenericSitemap
 from crudl.apps.core import views as core_views
 from crudl.apps.external_auth.views import (index, dashboard, logout)
 from crudl.apps.category import views as category_views
+from crudl.apps.music.models import Song
 
-urlpatterns = i18n_patterns(
+
+class CrudlSitemap(GenericSitemap):
+    limit = 50
+
+    def location(self, obj):
+        return obj.get_url_path()
+
+song_info_dict = {
+    "queryset": Song.objects.all(),
+    "date_field": "modified",
+}
+sitemaps = {"music": CrudlSitemap(song_info_dict, priority=1.0)}
+
+urlpatterns = [
+    path("sitemap.xml", sitemaps_views.index, {"sitemaps": sitemaps}),
+    path("sitemap-<str:section>.xml", sitemaps_views.sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
+]
+
+urlpatterns += i18n_patterns(
     path("", index, name="index"),
     path("dashboard/", dashboard, name="dashboard"),
     path("logout/", logout, name="logout"),
@@ -28,6 +49,7 @@ urlpatterns = i18n_patterns(
     path("admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
     path("management/", admin.site.urls),
     path("idea-categories/", category_views.IdeaCategoryListView.as_view(), name="idea_categories",),
+    path("songs/", include("crudl.apps.music.urls", namespace="music")),
 
 )
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

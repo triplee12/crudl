@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "django.forms",
+    "django.contrib.sitemaps",
     # third party app
     #"admin_honeypot",
     "myproject.apps.admin_honeypot_fix.apps.AdminHoneypotConfig",
@@ -327,3 +328,5 @@ SOCIAL_AUTH_AUTH0_KEY = get_secret("AUTH0_KEY")
 SOCIAL_AUTH_AUTH0_SECRET = get_secret("AUTH0_SECRET")
 SOCIAL_AUTH_AUTH0_SCOPE = get_secret("AUTH0_SCOPE")
 SOCIAL_AUTH_TRAILING_SLASH = False
+# API KEYS
+LAST_FM_API_KEY = get_secret("LAST_FM_API_KEY")
