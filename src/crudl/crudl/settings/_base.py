@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "crudl.apps.admin_honeypot_fix",
     "crudl.apps.auth_extra",
     "crudl.apps.external_auth",
+    "crudl.apps.music",
 ]
 
 MIDDLEWARE = [
