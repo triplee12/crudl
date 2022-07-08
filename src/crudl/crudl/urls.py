@@ -11,6 +11,7 @@ from crudl.apps.core import views as core_views
 from crudl.apps.external_auth.views import (index, dashboard, logout)
 from crudl.apps.category import views as category_views
 from crudl.apps.music.models import Song
+from crudl.apps.music.views import RESTSongList, RESTSongDetail
 
 
 class CrudlSitemap(GenericSitemap):
@@ -26,6 +27,9 @@ song_info_dict = {
 sitemaps = {"music": CrudlSitemap(song_info_dict, priority=1.0)}
 
 urlpatterns = [
+    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path("rest-api/songs/", RESTSongList.as_view(), name="rest_song_list"),
+    path("rest-api/songs/<uuid:pk>/", RESTSongDetail.as_view(), name="rest_song_detail"),
     path("sitemap.xml", sitemaps_views.index, {"sitemaps": sitemaps}),
     path("sitemap-<str:section>.xml", sitemaps_views.sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
 ]

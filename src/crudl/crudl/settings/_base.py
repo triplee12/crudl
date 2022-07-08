@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.forms",
     "django.contrib.sitemaps",
     # third party app
+    "rest_framework",
     #"admin_honeypot",
     "myproject.apps.admin_honeypot_fix.apps.AdminHoneypotConfig",
     "django_json_ld",
@@ -172,6 +173,13 @@ CACHES = {
     },
 }
 CACHES["default"] = CACHES["redis"]
+
+# REST_FRAMEWORK CONFIGURATIONS
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [ "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffestPagination",
+    "PAGE_SIZE": 50,
+}
 
 # GOOGLE API CONFIGURATIONS
 GOOGLE_MAPS_API_KEY = get_secret("GOOGLE_MAPS_API_KEY")
