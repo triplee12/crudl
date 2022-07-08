@@ -1,6 +1,21 @@
 {% extends 'crudl/base.html' %}
 {% load i18n %}
 
+{% block sidebar %}
+    <form action="" method="get">
+        {{ form.errors }}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+            {% trans "Filter" %}
+        </button>
+    </form>
+    {% url "music:songs_rss" as songs_rss_url %}
+    <p>
+        <a href="{{ songs_rss_url }}?{{ request.META.QUERY_STRING }}">
+            {% trans "Subscribe to RSS feed" %}
+        <a/>
+    </p>
+{% endblock %}
 {% block main %}
     <ul>
         {% for song in object_list %}
