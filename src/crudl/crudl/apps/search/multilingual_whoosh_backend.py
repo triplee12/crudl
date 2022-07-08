@@ -17,7 +17,8 @@ class MultilingualWhooshSearchBackend(WhooshSearchBackend):
                 lang_code_underscored = lang_code.replace("-", "_")
                 using = f"default_{lang_code_underscored}"
                 translation.activate(lang_code)
-                backend = connections[using].get_backend()
+                backend = connections[using].load_backend()
+                print(backend)
                 backend.update(index, iterable, commit, language_specific=True)
             translation.activate(current_language)
         elif language_specific:

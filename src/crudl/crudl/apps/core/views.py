@@ -7,7 +7,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.urls import reverse
 from django.template import Context, Template
 from django.views.decorators.cache import cache_page
-from django.views.decorators.csrf import crsf_protect
+from django.views.decorators.csrf import csrf_protect
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.shortcuts import render
@@ -35,7 +35,7 @@ def js_settings(request):
     )
     return response
 
-@crsf_protect
+@csrf_protect
 def upload_file(request):
     status_code = 400
     data = {"files": [], "error": _("Bad request")}

@@ -49,7 +49,7 @@ urlpatterns += i18n_patterns(
     path("search/", include("haystack.urls")),
     path("js_settings/", core_views.js_settings, name="js_settings"),
     path("upload-file/", core_views.upload_file, name="upload_file"),
-    path("likes/", include(("myproject.apps.likes.urls", "likes"), namespace="likes")),
+    path("likes/", include(("crudl.apps.likes.urls", "likes"), namespace="likes")),
     path("admin/", include("admin_honeypot.urls", namespace="admin_honeypot")),
     path("management/", admin.site.urls),
     path("idea-categories/", category_views.IdeaCategoryListView.as_view(), name="idea_categories",),

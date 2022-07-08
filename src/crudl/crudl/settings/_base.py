@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     # third party app
     "rest_framework",
     #"admin_honeypot",
-    "myproject.apps.admin_honeypot_fix.apps.AdminHoneypotConfig",
+    "crudl.apps.admin_honeypot_fix.apps.AdminHoneypotFixConfig",
     "django_json_ld",
     "crispy_forms",
     "qr_code",
@@ -62,7 +62,7 @@ INSTALLED_APPS = [
     "ordered_model",
     'crudl.apps.accounts.apps.SocialDjangoConfig',
     "imagekit",
-    "social_django",
+    # "social_django",
     "mptt",
     "django_mptt_admin",
     "treebeard",
@@ -76,10 +76,10 @@ INSTALLED_APPS = [
     "crudl.apps.locations",
     "crudl.apps.likes",
     "crudl.apps.products",
-    "crudl.apps.admin_honeypot_fix",
     "crudl.apps.auth_extra",
     "crudl.apps.external_auth",
     "crudl.apps.music",
+    "crudl.apps.news",
 ]
 
 MIDDLEWARE = [
@@ -177,7 +177,7 @@ CACHES["default"] = CACHES["redis"]
 # REST_FRAMEWORK CONFIGURATIONS
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [ "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffestPagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 50,
 }
 
@@ -219,18 +219,30 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en'
 
 LANGUAGES = [
-    ("bg", "Bulgarian"), ("hr", "Croatian"),
-    ("cs", "Czech"), ("da", "Danish"),
-    ("nl", "Dutch"), ("en", "English"),
-    ("et", "Estonian"), ("fi", "Finnish"),
-    ("fr", "French"), ("de", "German"),
-    ("el", "Greek"), ("hu", "Hungarian"),
-    ("ga", "Irish"), ("it", "Italian"),
-    ("lv", "Latvian"), ("lt", "Lithuanian"),
-    ("mt", "Maltese"), ("pl", "Polish"),
-    ("pt", "Portuguese"), ("ro", "Romanian"),
-    ("sk", "Slovak"), ("sl", "Slovene"),
-    ("es", "Spanish"), ("sv", "Swedish"),
+    ("bg", "Bulgarian"),
+    ("hr", "Croatian"),
+    ("cs", "Czech"),
+    ("da", "Danish"),
+    ("nl", "Dutch"),
+    ("en", "English"),
+    ("et", "Estonian"),
+    ("fi", "Finnish"),
+    ("fr", "French"),
+    ("de", "German"),
+    ("el", "Greek"),
+    ("hu", "Hungarian"),
+    ("ga", "Irish"), 
+    ("it", "Italian"),
+    ("lv", "Latvian"),
+    ("lt", "Lithuanian"),
+    ("mt", "Maltese"),
+    ("pl", "Polish"),
+    ("pt", "Portuguese"),
+    ("ro", "Romanian"),
+    ("sk", "Slovak"), 
+    ("sl", "Slovene"),
+    ("es", "Spanish"), 
+    ("sv", "Swedish"),
 ]
 
 LANGUAGES_EXCEPT_THE_DEFAULT = [
@@ -297,17 +309,25 @@ MAGAZINE_ARTICLE_THEME_CHOICES = [
 ]
 
 # Haystack Settings
-HAYSTACK_CONNECTIONS = {}
-for lang_code, lang_name in LANGUAGES:
-    lang_code_underscored = lang_code.replace("-", "_")
-    HAYSTACK_CONNECTIONS[f"default_{lang_code_underscored}"] = {
-        "ENGINE":"crudl.apps.search.multilingual_whoosh_backend.MultilingualWhooshEngine",
-        "PATH": os.path.join(BASE_DIR, "tmp", f"whoosh_index_{lang_code_underscored}"),
+# HAYSTACK_CONNECTIONS = {}
+# for lang_code, lang_name in LANGUAGES:
+#     lang_code_underscored = lang_code.replace("-", "_")
+#     HAYSTACK_CONNECTIONS[f"default_{lang_code_underscored}"] = {
+#         "ENGINE": "crudl.apps.search.multilingual_whoosh_backend.MultilingualWhooshEngine",
+#         "PATH": os.path.join(BASE_DIR, "tmp", f"whoosh_index_{lang_code_underscored}"),
+#     }
+#     lang_code_underscored = LANGUAGE_CODE.replace("-", "_")
+#     HAYSTACK_CONNECTIONS["default"] = HAYSTACK_CONNECTIONS[
+#         f"default_{lang_code_underscored}"
+#     ]
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        'URL': 'http://127.0.0.1:9200/',
+        'INDEX_NAME': 'haystack',
     }
-    lang_code_underscored = LANGUAGE_CODE.replace("-", "_")
-    HAYSTACK_CONNECTIONS["default"] = HAYSTACK_CONNECTIONS[
-        f"default_{lang_code_underscored}"
-    ]
+}
 
 # Elasticsearch Dsl
 ELASTICSEARCH_DSL={

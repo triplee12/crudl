@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.gis.admin import OSMGeoAdmin
 from django import forms
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -20,7 +21,7 @@ LONGITUDE_DEFINITION = _(
 
 class LocationModelForm(forms.ModelForm):
     latitude = forms.FloatField(label=_("Latitude"), required=False, help_text=LATITUDE_DEFINITION)
-    longitude = forms.floatField(label=_("Longitude"), required=False, help_text=LONGITUDE_DEFINITION)
+    longitude = forms.FloatField(label=_("Longitude"), required=False, help_text=LONGITUDE_DEFINITION)
 
     class Meta:
         model = Location
@@ -48,7 +49,7 @@ class LocationModelForm(forms.ModelForm):
 
 
 @admin.register(Location)
-class LocationAdmin(admin.OSMGeoAdmin):
+class LocationAdmin(OSMGeoAdmin):
     form = LocationModelForm
     save_on_top = True
     list_display = ("name", "street_address", "desription")

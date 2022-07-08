@@ -24,31 +24,31 @@ def _get_url_path(instance, language):
 class IdeaDocument(Document):
     author = fields.NestedField(
         properties={
-            "first_name": fields.StringField(),
-            "last_name": fields.StringField(),
-            "username": fields.StringField(),
+            "first_name": fields.TextField(attr="type_to_string"),
+            "last_name": fields.TextField(attr="type_to_string"),
+            "username": fields.TextField(attr="type_to_string"),
             "pk": fields.IntegerField(),
         },
         include_in_root=True
     )
-    title_bg = fields.StringField()
-    title_hr = fields.StringField()
+    title_bg = fields.TextField(attr="type_to_string")
+    title_hr = fields.TextField(attr="type_to_string")
     # other title_* fields for each language in the LANGUAGES setting
-    content_bg = fields.StringField()
-    content_hr = fields.StringField()
+    content_bg = fields.TextField(attr="type_to_string")
+    content_hr = fields.TextField(attr="type_to_string")
     # other content_* fields for each language in the LANGUAGES setting
-    picture_thumbnail_url = fields.StringField()
+    picture_thumbnail_url = fields.TextField(attr="type_to_string")
     categories = fields.NestedField(
         properties=dict(
             pk = fields.IntegerField(),
-            title_bg = fields.StringField(),
-            title_hr = fields.StringField(),
+            title_bg = fields.TextField(attr="type_to_string"),
+            title_hr = fields.TextField(attr="type_to_string"),
             # other title_* fields for each language in the LANGUAGES setting
         ),
         include_in_root=True,
     )
-    url_path_bg = fields.StringField()
-    url_path_hr = fields.StringField()
+    url_path_bg = fields.TextField(attr="type_to_string")
+    url_path_hr = fields.TextField(attr="type_to_string")
     # other url_path_* fields for each language in the LANGUAGES setting
 
     class Index:

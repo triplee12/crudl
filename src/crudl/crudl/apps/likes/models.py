@@ -9,7 +9,7 @@ from crudl.apps.core.models import (
 LikeableObject = object_relation_base_factory(is_required=True)
 
 
-class Like(CreationModificationDateBase, LikeableObject):
+class Like(CreationModificationDateBase):
     class Meta:
         verbose_name = _('Like')
         verbose_name_plural = _('Likes')

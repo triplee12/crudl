@@ -22,7 +22,6 @@ class IdeaIndex(indexes.SearchIndex, indexes.Indexable):
             idea.translated_title, idea.translated_content
         ]
         fields += [
-            category.translated_title
-            for category in idea.categories.all()
+            category.translated_title for category in idea.categories.all()
         ]
         return "\n".join(fields)

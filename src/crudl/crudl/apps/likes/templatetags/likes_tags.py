@@ -37,7 +37,7 @@ class ObjectLikeWidget(template.Node):
     
     @register.filter
     def liked_by(obj, user):
-        ct = ContentType,objects.get_for_model(obj)
+        ct = ContentType.objects.get_for_model(obj)
         liked = Like.objects.filter(user=user, content_type = ct, object_id=obj.pk)
         return liked.count() > 0
     

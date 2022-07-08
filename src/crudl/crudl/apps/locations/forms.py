@@ -1,8 +1,8 @@
 import os
 from django import forms
 from django.urls import reverse
-from django.utils.translations import gettext_lazy as _
-from django.core.files.staorage import default_storage
+from django.utils.translation import gettext_lazy as _
+from django.core.files.storage import default_storage
 from crispy_forms import bootstrap, helper, layout
 from .models import Location
 
@@ -18,7 +18,7 @@ class LocationForm(forms.ModelForm):
     
     def __init__(self, request, *args, **kwargs):
         self.request = request
-        super().__init__(*args, **kargs)
+        super().__init__(*args, **kwargs)
         geoposition = self.instance.get_geoposition()
         if geoposition:
             self.fields["latitude"].initial = geoposition.latitude
@@ -34,7 +34,7 @@ class LocationForm(forms.ModelForm):
         postal_code_field = layout.Field("postal_code", css_class="input-block-level")
         city_field = layout.Field("city_field", css_class="input-block-level")
         country_field = layout.Field("country_field", css_class="input-block-level")
-        lantitude_field = layout.Field("lantitude_field", css_class="input-block-level")
+        latitude_field = layout.Field("lantitude_field", css_class="input-block-level")
         longitude_field = layout.Field("longitude_field", css_class="input-block-level")
         address_fieldset = layout.Fieldset(_("Address"), street_address_field, street_address2_field, postal_code_field, city_field, country_field, latitude_field, longitude_field,)
         submit_button = layout.Submit("save", _("Save"))

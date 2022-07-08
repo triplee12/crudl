@@ -2,6 +2,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, NamedStyle, builtins
 from openpyxl.styles.numbers import FORMAT_NUMBER
 from openpyxl.writer.excel import save_virtual_workbook
+from django.db import models
 from django.contrib import admin
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
@@ -52,7 +53,7 @@ class PhotoFilter(admin.SimpleListFilter):
 
 
 class ColumnConfig:
-    def def __init__(self, heading, width=None, heading_style="Headline 1", style="Normal Wrapper", number_format=None):
+    def __init__(self, heading, width=None, heading_style="Headline 1", style="Normal Wrapper", number_format=None):
         self.heading = heading
         self.width = width
         self.heading_style = heading_style

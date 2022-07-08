@@ -1,5 +1,6 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin, Group, GroupAdmin
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from django.contrib.auth.models import Group
 from django.urls import reverse
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
@@ -55,7 +56,7 @@ class CrudlUserAdmin(UserAdmin):
     def download_gravatar(self, obj):
         from django.template.loader import render_to_string
         info = self.model._meta.app_label, self.model._meta.model_name
-        gravatar url = reverse("admin:%s %s download gravatar" % info, args=[obj.pk])
+        gravatar_url = reverse("admin:%s %s download gravatar" % info, args=[obj.pk])
         html = render_to_string("admin/accounts/includes/download_gravatar.html", context={"url": gravatar_url})
         return mark_safe(html)
     
@@ -63,7 +64,7 @@ class CrudlUserAdmin(UserAdmin):
 
     def get_urls(self):
         from functools import update_wrapper
-        from django.conf.urls import url
+        from django.urls import re_path
         
         def wrap(view):
             def wrapper(*args, **kargs):
@@ -73,7 +74,7 @@ class CrudlUserAdmin(UserAdmin):
         info = self.model._meta.app_label, self.model._meta.model_name
 
         urlpatterns = [
-            url(r"^(.+)/download-gravatar/$", wrap(self.download_gravatar_view), name="%s_%s_download_gravatar" % info,)
+            re_path(r"^(.+)/download-gravatar/$", wrap(self.download_gravatar_view), name="%s_%s_download_gravatar" % info,)
         ] + super().get_urls()
         return urlpatterns
     
