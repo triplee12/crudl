@@ -52,8 +52,8 @@ class LocationModelForm(forms.ModelForm):
 class LocationAdmin(OSMGeoAdmin):
     form = LocationModelForm
     save_on_top = True
-    list_display = ("name", "street_address", "desription")
-    search_fields = ("name", "street_address", "desription")
+    list_display = ("name", "street_address", "description")
+    search_fields = ("name", "street_address", "description")
 
     def get_fieldsets(self, request, obj=None):
         map_html = render_to_string(

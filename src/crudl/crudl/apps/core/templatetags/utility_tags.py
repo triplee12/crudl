@@ -3,7 +3,7 @@ from datetime import datetime
 from urllib.parse import urlencode
 from django.apps import apps
 from django import template
-from django.template import get_template
+from django.template.loader import get_template
 from django.utils import timezone
 from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 register = template.Library()
 
 """ FILTERS """
-DAYS_PER_FEAR = 365
+DAYS_PER_YEAR = 365
 DAYS_PER_MONTH = 30
 DAYS_PER_WEEK = 7
 
@@ -21,7 +21,7 @@ MEDIA_CLOSES_TAGS = "|".join([
 ])
 MEDIA_SINGLE_TAGS = "|".join(["img", "embed"])
 MEDIA_TAGS_REGEX = re.compile(
-    r"<(?P<tag>" + MEDIA_CLOSED_TAGS +") [\S\s]+?</(?P=tag)>|" +
+    r"<(?P<tag>" + MEDIA_CLOSES_TAGS +") [\S\s]+?</(?P=tag)>|" +
     r"<(" + MEDIA_SINGLE_TAGS + ")[^>]+>",
     re.MULTILINE
 )
@@ -33,16 +33,16 @@ def date_since(specific_date):
     (adapted from hhtps://www.djangosnippets.org/snippets/116)
     """
     today = timezone.now().date()
-    if isintance(specific_date, datetime):
+    if isinstance(specific_date, datetime):
         specific_date = specific_date.date()
     diff = today - specific_date
     diff_year = int(diff.days / DAYS_PER_YEAR)
     diff_month = int(diff.days / DAYS_PER_MONTH)
     diff_day = int(diff.days / DAYS_PER_WEEK)
-    deff_map = [
+    diff_map = [
         ("year", "years", diff_year,),
         ("month", "months", diff_month,),
-        ("week", "weeks", diff_week,),
+        ("week", "weeks", diff_day,),
         ("day", "days", diff.days,),
     ]
     for parts in diff_map:

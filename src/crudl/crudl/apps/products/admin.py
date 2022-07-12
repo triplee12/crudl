@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib import admin
 from django.http.response import HttpResponse
 from django.template.loader import render_to_string
-from django.utils.html import mark_safe
+from django.utils.safestring import mark_safe
 from django.utils.translation import  gettext_lazy as _
 from ordered_model.admin import  OrderedTabularInline, OrderedInlineModelAdminMixin
 from .models import Product, ProductPhoto
@@ -119,9 +119,9 @@ export_xlsx.short_description = _("Export XLSX")
 class ProductPhotoInline(OrderedTabularInline):
     model = ProductPhoto
     extra = 0
-    fields = ("photo_preview", "photo", "order", "move_up_down_likes")
-    readonly_fields = ("photo_preview", "order", "move_up_down_links")
-    ordering = ("order",)
+    fields = ("photo_preview", "photo", "order_with_respect_to", "move_up_down_likes")
+    readonly_fields = ("photo", "order_with_respect_to", "move_up_down_links")
+    ordering = ("product",)
     
     def get_photo_preview(self, obj):
         photo_preview = render_to_string(
@@ -142,24 +142,24 @@ class ProductAdmin(OrderedInlineModelAdminMixin, admin.ModelAdmin):
     fieldsets = (
         (_("Product"), {"fields": ("title", "slug", "description", "price")}),
     )
-    prepopulated_fields = {"slug": ("title")}
+    prepopulated_fields = {"slug": ("title",)}
     inlines = [ProductPhotoInline]
 
 
-def first_photo(self, obj):
-    project_photos = obj.productPhoto_set.all()[:1]
-    if project_photos.count() > 0:
-        photo_preview = render_to_string(
-            "admin/products/includes/photo-preview.html",
-            {"photo": project_photos[0], "product": obj},
-        )
-        return mark_safe(photo_preview)
-    return ""
-first_photo.short_description = _("Preview")
+    def first_photo(self, obj):
+        project_photos = obj.productPhoto_set.all()[:1]
+        if project_photos.count() > 0:
+            photo_preview = render_to_string(
+                "admin/products/includes/photo-preview.html",
+                {"photo": project_photos[0], "product": obj},
+            )
+            return mark_safe(photo_preview)
+        return ""
+    first_photo.short_description = _("Preview")
 
-def  has_description(self, obj):
-    return bool(obj.description)
+    def  has_description(self, obj):
+        return bool(obj.description)
 
-has_description.short_description = _("Has description?")
-has_description.admin_order_field = "description"
-has_description.boolean = True
+    has_description.short_description = _("Has description?")
+    has_description.admin_order_field = "description"
+    has_description.boolean = True

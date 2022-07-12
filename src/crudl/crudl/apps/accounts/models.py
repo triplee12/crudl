@@ -58,7 +58,7 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
     objects = UserManager()
-    avart = models.ImageField(_("Avatar"), upload_to=upload_to, blank=True)
+    avatar = models.ImageField(_("Avatar"), upload_to=upload_to, blank=True)
     avatar_thumbnail = ImageSpecField(source="avatar", processors=[ResizeToFill(60, 60)], format="JPEG", options={"quality":100},)
     
     def save(self, *args, **kwargs):

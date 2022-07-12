@@ -1,5 +1,5 @@
 {% extends "crudl/base.html" %}
-{% load i18n %}
+{% load i18n static %}
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{% static 'site/css/rating.css' %}">
 {% endblock css %}
@@ -14,7 +14,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <div class="float-right">
-                                    <div class="rating" aria-label="{% clocktrans with stars=location.rating %} {{ stars }} of 5 stars {% endblocktrans %}">
+                                    <div class="rating" aria-label="{% blocktrans with stars=location.rating %} {{ stars }} of 5 stars {% endblocktrans %}">
                                         <span style="width:{{ location.get_rating_percentage }}%"></span>
                                     </div>
                                 </div>
@@ -30,7 +30,7 @@
                         <div class="loading-indicator"></div>
                     </div>
                     <p class="pagination">
-                        <a class="next-page" href="{% mofify_query page=page_obj.next_page.number %}">
+                        <a class="next-page" href="{% modify_query page=page_obj.next_page.number %}">
                             {% trans "More..." %}
                         </a>
                     </p>

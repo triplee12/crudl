@@ -37,6 +37,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+WSGI_APPLICATION = 'crudl.wsgi.application'
 
 # Application definition
 
@@ -76,14 +77,13 @@ INSTALLED_APPS = [
     "crudl.apps.locations",
     "crudl.apps.likes",
     "crudl.apps.products",
-    "crudl.apps.auth_extra",
-    "crudl.apps.external_auth",
     "crudl.apps.music",
     "crudl.apps.news",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -91,7 +91,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    "csp.middleware.CSPMiddleware",
+    #"csp.middleware.CSPMiddleware",
 ]
 
 ROOT_URLCONF = 'crudl.urls'
@@ -109,8 +109,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 "django.template.context_processors.media",
                 "django.template.context_processors.static",
-                "crudl.apps.core.context_processors.website_url",
                 "sekizai.context_processors.sekizai",
+                "crudl.apps.core.context_processors.website_url",
                 "crudl.apps.core.context_processors.google_maps",
                 "crudl.apps.external_auth.context_processors.auth0",
             ],
@@ -124,7 +124,7 @@ AUTHENTICATION_BACKENDS = {
 }
 
 LOGIN_URL = "/login/auth0"
-LOGIN_REDIRECT_URL = "dashboard"
+LOGIN_REDIRECT_URL = "/dashboard"
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
@@ -135,7 +135,6 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
 ]
 
-WSGI_APPLICATION = 'crudl.wsgi.application'
 
 
 # Database
@@ -190,7 +189,7 @@ GOOGLE_MAPS_API_KEY = get_secret("GOOGLE_MAPS_API_KEY")
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-        "OPTIONS": {"min_similarity": 0.5},
+        "OPTIONS": {"max_similarity": 0.7},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
@@ -211,7 +210,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "OPTIONS": {"special_chars": ("{", "}", "^", "&") + SpecialCharacterInclusionValidator.DEFAULT_SPECIAL_CHARACTERS},
     },
 ]
-
+AUTH_USER_MODEL = 'accounts.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -272,7 +271,7 @@ USE_TZ = True
 
 with open(os.path.join(BASE_DIR, 'crudl', 'settings', 'last-modified.txt'), 'r') as f:
     timestamp = f.readline().strip()
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 timestamp = get_git_changeset_timestamp(BASE_DIR)
 STATIC_URL = f'/static/' # Add {timestamp} to static and media url if you want to get the latest git change timestamp
 MEDIA_URL = f'/media/'

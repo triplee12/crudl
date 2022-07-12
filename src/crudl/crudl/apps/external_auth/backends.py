@@ -30,7 +30,7 @@ class Auth0(BaseOAuth2):
         payload = jwt.decode(id_token, jwks.read(), algorithms=["RS256"], audience=audience, issuer=issuer,)
         first_name, last_name = (payload.get("name") or " ").split(" ", 1)
         return {
-            "username": payload.get("nickname") or " ",
+            "username": payload.get("nickname") or "",
             "first_name": first_name,
             "last_name": last_name,
             "picture": payload.get("picture") or "",

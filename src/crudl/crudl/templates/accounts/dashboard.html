@@ -4,6 +4,6 @@
     <div class="logged-in-box auth0-box logged-in">
         <img src="{{ auth0_user.extra_data.picture }} alt="{% trans 'Avatar' %}" width="50" height="50" />
         <h2>{% blocktrans with name=request.user.first_name %}Welcome, {{ name }}{% endblocktrans %}}</h2>
-        <a class="btn btn-primary btn-logout" href="{% url 'auth0_logout' %}">{% trans 'Log out' %}</a>
+        <a class="btn btn-primary btn-logout" href="{% url 'logout' %}">{% trans 'Log out' %}</a>
     </div>
 {% endblock content %}

@@ -1,10 +1,13 @@
 # from audioop import reverse
 from django.urls import reverse
 from django.db import models
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from crudl.apps.core.models import MetaTagsBase, CreationModificationDateBase, UrlBase
+
+User = settings.AUTH_USER_MODEL
 
 class NewsArticle(models.Model):
     title = models.CharField(_("Title"), max_length=200, unique=True)

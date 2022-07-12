@@ -42,6 +42,7 @@ class ProductPhoto(models.Model):
     class Meta(OrderedModel.Meta):
         verbose_name = _("Photo")
         verbose_name_plural = _("Photos")
+        ordering = ("product",)
     
     def __str__(self):
         return self.photo.name
