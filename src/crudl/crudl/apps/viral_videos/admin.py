@@ -1,3 +1,5 @@
 from django.contrib import admin
-
-# Register your models here.
+from .models import ViralVideo
+@admin.register(ViralVideo)
+class ViralVideoAdmin(admin.ModelAdmin):
+    list_display = ["title", "created", "modified"]

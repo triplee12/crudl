@@ -54,6 +54,7 @@ urlpatterns += i18n_patterns(
     path("management/", admin.site.urls),
     path("idea-categories/", category_views.IdeaCategoryListView.as_view(), name="idea_categories",),
     path("songs/", include("crudl.apps.music.urls", namespace="music")),
+    path("viral-videos/", include("crudl.apps.viral_videos.urls", namespace="viral_videos")),
 
 )
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

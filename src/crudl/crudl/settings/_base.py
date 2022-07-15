@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "crudl.apps.products",
     "crudl.apps.music",
     "crudl.apps.news",
+    "crudl.apps.viral_videos",
 ]
 
 MIDDLEWARE = [
@@ -357,3 +358,17 @@ SOCIAL_AUTH_AUTH0_SCOPE = get_secret("AUTH0_SCOPE")
 SOCIAL_AUTH_TRAILING_SLASH = False
 # API KEYS
 LAST_FM_API_KEY = get_secret("LAST_FM_API_KEY")
+
+# Logging configuration
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "file": {
+#             "level": "DEBUG",
+#             "class": "logging.FileHandler",
+#             "filename": os.path.join(BASE_DIR, "tmp", "debug.log"),
+#         }
+#     },
+#     "loggers": {"django": {"handlers": ["file"], "level": "DEBUG", "propagate": True}},
+# }
