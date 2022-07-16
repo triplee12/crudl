@@ -1,4 +1,3 @@
-from abc import abstractclassmethod
 from urllib.parse import urlparse, urlunparse
 from django.conf import settings
 from django.db import models
@@ -8,6 +7,21 @@ from django.template.loader import render_to_string
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldError
+
+class CreatorBase(models.Model):
+    """Abstract base class for a creator"""
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("creator"), editable=False, blank=True, null=True, on_delete=models.SET_NULL, on_update=models.SET_NULL,)
+
+    class Meta:
+        abstract = True
+    
+    def save(self, *args, **kwargs):
+        from .middleware import get_current_user
+
+        if not self.creator:
+            self.creator = get_current_user()
+        super().save(*args, **kwargs)
+    save.alters_data = True
 
 class UrlBase(models.Model):
     """

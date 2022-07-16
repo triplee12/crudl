@@ -37,6 +37,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
+
 WSGI_APPLICATION = 'crudl.wsgi.application'
 
 # Application definition
@@ -80,9 +86,12 @@ INSTALLED_APPS = [
     "crudl.apps.music",
     "crudl.apps.news",
     "crudl.apps.viral_videos",
+    "crudl.apps.guerrilla_patches",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -93,6 +102,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     #"csp.middleware.CSPMiddleware",
+    "crudl.apps.core.middleware.ThreadLocalMiddleware",
 ]
 
 ROOT_URLCONF = 'crudl.urls'
@@ -372,3 +382,25 @@ LAST_FM_API_KEY = get_secret("LAST_FM_API_KEY")
 #     },
 #     "loggers": {"django": {"handlers": ["file"], "level": "DEBUG", "propagate": True}},
 # }
+
+# DEBUG Toolbar Config
+DEBUG_TOOLBAR_CONFIG = {
+    "DISABLE_PANELS": [],
+    "SHOW_TOOLBAR_CALLBACK":
+    "crudl.apps.core.misc.custom_show_toolbar",
+    "SHOW_TEMPLATE_CONTEXT": True,
+}
+DEBUG_TOOLBAR_PANELS = [
+    "debug_toolbar.panels.versions.VersionsPanel",
+    "debug_toolbar.panels.timer.TimerPanel",
+    "debug_toolbar.panels.settings.SettingsPanel",
+    "debug_toolbar.panels.headers.HeadersPanel",
+    "debug_toolbar.panels.request.RequestPanel",
+    "debug_toolbar.panels.sql.SQLPanel",
+    "debug_toolbar.panels.templates.TemplatesPanel",
+    "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+    "debug_toolbar.panels.cache.CachePanel",
+    "debug_toolbar.panels.signals.SignalsPanel",
+    "debug_toolbar.panels.logging.LoggingPanel",
+    "debug_toolbar.panels.redirects.RedirectsPanel",
+]

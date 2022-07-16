@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 from django.shortcuts import redirect
 from django.contrib.sitemaps import views as sitemaps_views
 from django.contrib.sitemaps import GenericSitemap
+import debug_toolbar
 from crudl.apps.core import views as core_views
 from crudl.apps.external_auth.views import (index, dashboard, logout)
 from crudl.apps.category import views as category_views
@@ -55,7 +56,10 @@ urlpatterns += i18n_patterns(
     path("idea-categories/", category_views.IdeaCategoryListView.as_view(), name="idea_categories",),
     path("songs/", include("crudl.apps.music.urls", namespace="music")),
     path("viral-videos/", include("crudl.apps.viral_videos.urls", namespace="viral_videos")),
-
 )
+urlpatterns = [
+    path('__debug__/', include(debug_toolbar.urls)),
+] + urlpatterns
+
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 urlpatterns += static("/media/", document_root=settings.MEDIA_ROOT)
