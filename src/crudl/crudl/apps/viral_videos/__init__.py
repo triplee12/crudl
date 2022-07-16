@@ -1,0 +1,1 @@
+default_app_config = "crudl.apps.viral_videos.apps.ViralVideosAppConfig"

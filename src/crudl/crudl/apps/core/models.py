@@ -10,7 +10,7 @@ from django.core.exceptions import FieldError
 
 class CreatorBase(models.Model):
     """Abstract base class for a creator"""
-    creator = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("creator"), editable=False, blank=True, null=True, on_delete=models.SET_NULL, on_update=models.SET_NULL,)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("creator"), editable=False, blank=True, null=True, on_delete=models.SET_NULL,)
 
     class Meta:
         abstract = True

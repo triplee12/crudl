@@ -107,6 +107,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'crudl.urls'
 
+ADMINS = [("Administrator", "admin@example.com")]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

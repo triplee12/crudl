@@ -5,4 +5,8 @@ from django.utils.translation import gettext_lazy as _
 class ViralVideosConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'crudl.apps.viral_videos'
-    verbose_name: str = _('Viral video')
+    verbose_name: str = _('Viral videos')
+
+    def ready(self) -> None:
+        from .signals import inform_administrators
+        return super().ready()
