@@ -7,6 +7,6 @@ class ViralVideosConfig(AppConfig):
     name = 'crudl.apps.viral_videos'
     verbose_name: str = _('Viral videos')
 
-    def ready(self) -> None:
+    def ready(self):
         from .signals import inform_administrators
-        return super().ready()
+        from .checks import settings_check

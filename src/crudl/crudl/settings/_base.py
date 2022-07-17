@@ -107,7 +107,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'crudl.urls'
 
-ADMINS = [("Administrator", "admin@example.com")]
+ADMINS = [
+    ("Administrator", "admin@example.com"),
+    ("Admin", "administrator@example.com"),
+]
 
 TEMPLATES = [
     {
