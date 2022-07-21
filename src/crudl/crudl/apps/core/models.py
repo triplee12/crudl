@@ -182,6 +182,7 @@ def object_relation_base_factory(prefix=None, prefix_verbose=None, add_related_n
             ct_field=content_type_field,
             fk_field=object_id_field
         )
+        
         TheClass.add_to_class(content_type_field, content_type)
         TheClass.add_to_class(object_id_field, object_id)
         TheClass.add_to_class(content_object_field, content_object)
