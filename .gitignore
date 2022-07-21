@@ -137,3 +137,8 @@ static/
 secrets.json
 # Logging
 tmp/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
